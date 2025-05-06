@@ -23,6 +23,7 @@ extern volatile uint32_t _current_ticks;
 
 void Clock_Config(void);
 void GPIO_Config(void);
+void TIM3_Config(void);
 
 /* Information functions */
 
