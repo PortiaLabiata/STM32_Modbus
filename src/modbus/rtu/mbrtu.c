@@ -86,7 +86,8 @@ eMBRTUInit( UCHAR ucSlaveAddress, UCHAR ucPort, ULONG ulBaudRate, eMBParity ePar
     ENTER_CRITICAL_SECTION(  );
 
     /* Modbus RTU uses 8 Databits. */
-    if( xMBPortSerialInit( ucPort, ulBaudRate, 8, eParity ) != TRUE )
+    // 8 is switched to 9, because because
+    if( xMBPortSerialInit( ucPort, ulBaudRate, 9, eParity ) != TRUE )
     {
         eStatus = MB_EPORTERR;
     }

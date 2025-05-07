@@ -31,8 +31,8 @@
 #define PR_BEGIN_EXTERN_C           extern "C" {
 #define	PR_END_EXTERN_C             }
 
-#define ENTER_CRITICAL_SECTION( )   __disable_irq()
-#define EXIT_CRITICAL_SECTION( )    __enable_irq()
+#define ENTER_CRITICAL_SECTION( )   __enter_critical()
+#define EXIT_CRITICAL_SECTION( )    __exit_critical()
 
 typedef uint8_t BOOL;
 

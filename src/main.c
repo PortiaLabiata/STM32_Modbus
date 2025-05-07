@@ -21,7 +21,7 @@ int main(void) {
 
     eStatus = eMBInit(MB_RTU, 1, 0, BAUD_RATE, MB_PAR_EVEN);
     eStatus = eMBEnable();
-    
+
     while (1) {
         (void)eMBPoll();
         usRegInputBuf[0]++;

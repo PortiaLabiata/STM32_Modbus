@@ -6,6 +6,7 @@ uint32_t _pclk2_freq = 0;
 uint32_t _pclk1_freq = 0;
 
 volatile uint32_t _current_ticks = 0;
+static uint32_t _crit_depth = 0;
 
 /* System information functions */
 
@@ -98,6 +99,17 @@ void delay(uint32_t ms) {
     uint32_t ms_start = Get_CurrentTicks();
     while (Get_CurrentTicks() - ms_start < ms) {
         __NOP();
+    }
+}
+
+void __enter_critical(void) {
+    _crit_depth++;
+    __disable_irq();
+}
+
+void __exit_critical(void) {
+    if (--_crit_depth == 0) {
+        __enable_irq();
     }
 }
 

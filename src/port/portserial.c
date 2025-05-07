@@ -63,6 +63,7 @@ xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
 
     if (eParity == MB_PAR_EVEN) {
         USART1->CR1 |= USART_CR1_PS;
+        USART1->CR1 |= USART_CR1_PCE;
     } else {
         return FALSE; // Not implemented.
     }

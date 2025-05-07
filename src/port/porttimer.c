@@ -30,11 +30,14 @@
 static void prvvTIMERExpiredISR( void );
 
 /* ----------------------- Start implementation -----------------------------*/
+/**
+ * \todo Add different apb1 psc values
+ */
 BOOL
 xMBPortTimersInit( USHORT usTim1Timerout50us )
 {
-    TIM3->PSC = (PCLK1_FREQ / 1000000) * 50 - 1;
-    TIM3->ARR = usTim1Timerout50us;
+    TIM3->PSC = (PCLK1_FREQ / 500000) - 1;
+    TIM3->ARR = usTim1Timerout50us - 1;
     TIM3->EGR |= TIM_EGR_UG; // Generate an event, so that ARR value is loaded
     return TRUE;
 }
@@ -59,7 +62,8 @@ vMBPortTimersDisable(  )
 
 void TIM3_IRQHandler(void) {
     TIM3->SR &= ~(TIM_SR_UIF); // Reset the timer status
-    prvvTIMERExpiredISR();
+    GPIOC->ODR ^= GPIO_ODR_ODR13;
+    //prvvTIMERExpiredISR();
 }
 
 static void prvvTIMERExpiredISR( void )

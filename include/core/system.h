@@ -35,3 +35,5 @@ uint32_t Get_CurrentTicks(void);
 /* Utilitary functions */
 
 void delay(uint32_t ms);
+void __enter_critical(void);
+void __exit_critical(void);
