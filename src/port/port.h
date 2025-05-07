@@ -23,7 +23,7 @@
 #define _PORT_H
 
 #include <assert.h>
-#include <inttypes.h>
+//#include <inttypes.h>
 #include <stm32f103x6.h>
 #include "core/system.h"
 

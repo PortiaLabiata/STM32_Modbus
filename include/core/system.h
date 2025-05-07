@@ -12,7 +12,7 @@
 #define PCLK2_FREQ  _pclk2_freq
 #define PCLK1_FREQ  _pclk1_freq
 
-#define BAUD_RATE   115200
+#define BAUD_RATE   9600
 
 /* Global variables */
 

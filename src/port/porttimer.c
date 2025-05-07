@@ -33,9 +33,9 @@ static void prvvTIMERExpiredISR( void );
 BOOL
 xMBPortTimersInit( USHORT usTim1Timerout50us )
 {
-    const uint32_t t50 = MB_CHAR_LENGTH * 500000 / BAUD_RATE;
-    TIM3->PSC = (PCLK1_FREQ / 1000000) * t50 - 1;
+    TIM3->PSC = (PCLK1_FREQ / 1000000) * 50 - 1;
     TIM3->ARR = usTim1Timerout50us;
+    TIM3->EGR |= TIM_EGR_UG; // Generate an event, so that ARR value is loaded
     return TRUE;
 }
 
@@ -43,7 +43,6 @@ xMBPortTimersInit( USHORT usTim1Timerout50us )
 inline void
 vMBPortTimersEnable(  )
 {
-    TIM3->EGR |= TIM_EGR_UG; // Generate an event, so that ARR value is loaded
     TIM3->CR1 |= TIM_CR1_CEN;
 }
 
@@ -60,7 +59,6 @@ vMBPortTimersDisable(  )
 
 void TIM3_IRQHandler(void) {
     TIM3->SR &= ~(TIM_SR_UIF); // Reset the timer status
-    GPIOC->ODR ^= GPIO_ODR_ODR13_Msk;
     prvvTIMERExpiredISR();
 }
 

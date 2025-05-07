@@ -33,15 +33,50 @@ static void prvvUARTRxISR( void );
 void
 vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
 {
-    /* If xRXEnable enable serial receive interrupts. If xTxENable enable
-     * transmitter empty interrupts.
-     */
+    if (xRxEnable) {
+        USART1->CR1 |= USART_CR1_RE;
+        USART1->CR1 |= USART_CR1_RXNEIE;
+    } else {
+        USART1->CR1 &= ~USART_CR1_RE;
+        USART1->CR1 &= ~USART_CR1_RXNEIE;
+    }
+    if (xTxEnable) {
+        USART1->CR1 |= USART_CR1_TE;
+        USART1->CR1 |= USART_CR1_TXEIE;
+    } else {
+        USART1->CR1 &= ~USART_CR1_TE;
+        USART1->CR1 &= ~USART_CR1_TXEIE;
+    }
+    USART1->CR1 |= USART_CR1_UE;
 }
 
 BOOL
 xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity )
 {
-    return FALSE;
+    RCC->APB2ENR |= (RCC_APB2ENR_USART1EN | RCC_APB2ENR_IOPAEN);
+
+    GPIOA->CRH &= ~(GPIO_CRH_CNF9_Msk | GPIO_CRH_MODE9_Msk);
+    GPIOA->CRH |= (GPIO_CRH_CNF9_1 | GPIO_CRH_MODE9_1);
+
+    GPIOA->CRH &= ~(GPIO_CRH_CNF10 | GPIO_CRH_MODE10);
+    GPIOA->CRH |= GPIO_CRH_CNF10_1;  // Input floating
+
+    if (eParity == MB_PAR_EVEN) {
+        USART1->CR1 |= USART_CR1_PS;
+    } else {
+        return FALSE; // Not implemented.
+    }
+
+    if (ucDataBits == 9) {
+        USART1->CR1 |= USART_CR1_M;
+    } else if (ucDataBits != 8) {
+        return FALSE;
+    }
+
+    USART1->BRR = PCLK2_FREQ / ulBaudRate;
+    NVIC_SetPriority(USART1_IRQn, 0);
+    NVIC_EnableIRQ(USART1_IRQn);
+    return TRUE;
 }
 
 BOOL
@@ -50,15 +85,14 @@ xMBPortSerialPutByte( CHAR ucByte )
     /* Put a byte in the UARTs transmit buffer. This function is called
      * by the protocol stack if pxMBFrameCBTransmitterEmpty( ) has been
      * called. */
+    USART1->DR = ucByte;
     return TRUE;
 }
 
 BOOL
 xMBPortSerialGetByte( CHAR * pucByte )
 {
-    /* Return the byte in the UARTs receive buffer. This function is called
-     * by the protocol stack after pxMBFrameCBByteReceived( ) has been called.
-     */
+    *pucByte = USART1->DR;
     return TRUE;
 }
 
@@ -81,4 +115,14 @@ static void prvvUARTTxReadyISR( void )
 static void prvvUARTRxISR( void )
 {
     pxMBFrameCBByteReceived(  );
+}
+
+/* System ISR */
+
+void USART1_IRQHandler(void) {
+    if (USART1->SR & USART_SR_RXNE_Msk) {
+        prvvUARTRxISR();
+    } else if (USART1->SR & USART_SR_TXE_Msk) {
+        prvvUARTTxReadyISR();
+    }
 }
