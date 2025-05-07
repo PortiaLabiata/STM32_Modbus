@@ -143,7 +143,7 @@ void GPIO_Config(void) {
  * \todo Add PSC options, considering UART Baud rate.
  */
 void TIM3_Config(void) {
-    RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
+    RCC->APB1ENR |= RCC_APB1ENR_TIM3EN; // Enable clocking
     TIM3->DIER |= TIM_DIER_UIE; // Enable update event interrupt
     TIM3->CR1 &= ~(TIM_CR1_CKD_Msk);
     NVIC_SetPriority(TIM3_IRQn, 0);

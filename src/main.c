@@ -1,6 +1,7 @@
 #include "main.h"
 #include "core/system.h"
 #include "core/types.h"
+#include "core/interrupts.h"
 
 #include "mb.h"
 #include "port.h"
@@ -10,7 +11,7 @@ int main(void) {
     GPIO_Config();
     TIM3_Config();
 
-    xMBPortTimersInit(1000);
+    xMBPortTimersInit(7);
     vMBPortTimersEnable();
     
     while (1) {

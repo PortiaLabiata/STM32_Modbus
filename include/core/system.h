@@ -1,6 +1,7 @@
 #pragma once
 #include <stm32f103x6.h>
 #include "core/types.h"
+#include "core/const.h"
 
 #define HSI_FREQ                8000000 // HSI frequency in Hz
 #define HSE_FREQ                0       // Since I don't have HSE
@@ -10,6 +11,8 @@
 #define AHB_FREQ    _ahb_freq
 #define PCLK2_FREQ  _pclk2_freq
 #define PCLK1_FREQ  _pclk1_freq
+
+#define BAUD_RATE   115200
 
 /* Global variables */
 
