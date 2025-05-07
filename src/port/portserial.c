@@ -47,7 +47,6 @@ vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
         USART1->CR1 &= ~USART_CR1_TE;
         USART1->CR1 &= ~USART_CR1_TXEIE;
     }
-    USART1->CR1 |= USART_CR1_UE;
 }
 
 BOOL
@@ -75,6 +74,7 @@ xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
     }
 
     USART1->BRR = PCLK2_FREQ / ulBaudRate;
+    USART1->CR1 |= USART_CR1_UE;
     NVIC_SetPriority(USART1_IRQn, 0);
     NVIC_EnableIRQ(USART1_IRQn);
     return TRUE;
@@ -122,6 +122,9 @@ static void prvvUARTRxISR( void )
 
 void USART1_IRQHandler(void) {
     if (USART1->SR & USART_SR_RXNE_Msk) {
+        if (USART1->SR & (USART_SR_FE_Msk | USART_SR_NE_Msk)) {
+            __NOP();
+        }
         prvvUARTRxISR();
         GPIOC->ODR ^= GPIO_ODR_ODR13;
     } else if (USART1->SR & USART_SR_TXE_Msk) {
