@@ -62,7 +62,7 @@ xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
     GPIOA->CRH |= GPIO_CRH_CNF10_1;  // Input floating
 
     if (eParity == MB_PAR_EVEN) {
-        USART1->CR1 |= USART_CR1_PS;
+        //USART1->CR1 |= USART_CR1_PS;
         USART1->CR1 |= USART_CR1_PCE;
     } else {
         return FALSE; // Not implemented.
@@ -123,6 +123,7 @@ static void prvvUARTRxISR( void )
 void USART1_IRQHandler(void) {
     if (USART1->SR & USART_SR_RXNE_Msk) {
         prvvUARTRxISR();
+        GPIOC->ODR ^= GPIO_ODR_ODR13;
     } else if (USART1->SR & USART_SR_TXE_Msk) {
         prvvUARTTxReadyISR();
     }
