@@ -308,6 +308,10 @@ xMBRTUTransmitFSM( void )
         }
         else
         {
+            // I added this code!
+            while (!(USART1->SR & USART_SR_TC_Msk)) {
+                __NOP();
+            }
             xNeedPoll = xMBPortEventPost( EV_FRAME_SENT );
             /* Disable transmitter. This prevents another transmit buffer
              * empty interrupt. */
