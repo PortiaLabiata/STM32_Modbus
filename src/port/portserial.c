@@ -44,6 +44,10 @@ vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
         USART1->CR1 |= USART_CR1_TE;
         USART1->CR1 |= USART_CR1_TXEIE;
     } else {
+        // I added this code!
+        while (!(USART1->SR & USART_SR_TC_Msk)) {
+            __NOP();
+        }
         USART1->CR1 &= ~USART_CR1_TE;
         USART1->CR1 &= ~USART_CR1_TXEIE;
     }
