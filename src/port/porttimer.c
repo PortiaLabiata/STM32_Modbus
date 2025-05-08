@@ -30,9 +30,6 @@
 static void prvvTIMERExpiredISR( void );
 
 /* ----------------------- Start implementation -----------------------------*/
-/**
- * \todo Add different apb1 psc values
- */
 BOOL
 xMBPortTimersInit( USHORT usTim1Timerout50us )
 {

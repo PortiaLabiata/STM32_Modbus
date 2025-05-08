@@ -151,9 +151,6 @@ void GPIO_Config(void) {
     GPIOC->CRH |= (GPIO_CRH_CNF13_0 | GPIO_CRH_MODE13_1);
 }
 
-/**
- * \todo Add PSC options, considering UART Baud rate.
- */
 void TIM3_Config(void) {
     RCC->APB1ENR |= RCC_APB1ENR_TIM3EN; // Enable clocking
     TIM3->DIER |= TIM_DIER_UIE; // Enable update event interrupt

@@ -44,7 +44,6 @@ vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
         USART1->CR1 |= USART_CR1_TE;
         USART1->CR1 |= USART_CR1_TXEIE;
     } else {
-        // I added this code!
         while (!(USART1->SR & USART_SR_TC_Msk)) {
             __NOP();
         }
@@ -56,6 +55,7 @@ vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
 BOOL
 xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity )
 {
+    // I will likely use one USART for that, so I can hardcode it for now.
     RCC->APB2ENR |= (RCC_APB2ENR_USART1EN | RCC_APB2ENR_IOPAEN);
 
     GPIOA->CRH &= ~(GPIO_CRH_CNF9_Msk | GPIO_CRH_MODE9_Msk);
@@ -64,11 +64,15 @@ xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
     GPIOA->CRH &= ~(GPIO_CRH_CNF10 | GPIO_CRH_MODE10);
     GPIOA->CRH |= GPIO_CRH_CNF10_1;  // Input floating
 
-    if (eParity == MB_PAR_EVEN) {
-        //USART1->CR1 |= USART_CR1_PS;
+    if (eParity != MB_PAR_NONE) {
         USART1->CR1 |= USART_CR1_PCE;
+        if (eParity == MB_PAR_ODD) {
+            USART1->CR1 |= USART_CR1_PS;
+        } else if (eParity != MB_PAR_EVEN) {
+            return FALSE;
+        }
     } else {
-        return FALSE; // Not implemented.
+        USART1->CR2 |= USART_CR2_STOP_1; // Two stop-bits are required if no parity
     }
 
     if (ucDataBits == 9) {
@@ -126,11 +130,7 @@ static void prvvUARTRxISR( void )
 
 void USART1_IRQHandler(void) {
     if (USART1->SR & USART_SR_RXNE_Msk) {
-        if (USART1->SR & (USART_SR_FE_Msk | USART_SR_NE_Msk)) {
-            __NOP();
-        }
         prvvUARTRxISR();
-        GPIOC->ODR ^= GPIO_ODR_ODR13;
     } else if (USART1->SR & USART_SR_TXE_Msk) {
         prvvUARTTxReadyISR();
     }
